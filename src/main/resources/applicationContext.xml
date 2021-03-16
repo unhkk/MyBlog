@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!-- 加载数据库配置文件 -->
+    <context:property-placeholder location="classpath:db.properties" ignore-unresolvable="true"/>
+    <!--连接池-->
+    <bean id="dataSource1" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.driver}"></property>
+        <property name="url" value="${jdbc.url}"></property>
+        <property name="username" value="${jdbc.username}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+    </bean>
+
+    <!--创建SqlSessionFactory SqlSessionFactoryBean-->
+    <bean id="sqlSessionFactoryBean1" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource1"></property> <!--数据源-->
+        <property name="typeAliasesPackage" value="com.unhkk.entity"></property> <!--实体别名(类名做别名)-->
+        <!-- 配置PageHelper分页插件 -->
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageInterceptor">
+                    <property name="properties">
+                        <props>
+                            <prop key="helperDialect">mysql</prop>
+                            <prop key="reasonable">true</prop>
+                        </props>
+                    </property>
+                </bean>
+            </array>
+        </property>
+    </bean>
+    <!-- 创建DAO对象 MapperScannerConfigure -->
+    <!-- DAO接口的实现类对象：session -》 session.getMapper(XXXDAO) -》 xXXDAO实现类对象 -->
+    <bean id="scanner1" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryBean1"></property>
+        <property name="basePackage" value="com.unhkk.mapper"></property> <!--指定DAO接口放置的包-->
+    </bean>
+
+
+
+    <!--基于注解的处理器映射器和适配器-->
+    <mvc:annotation-driven></mvc:annotation-driven>
+    <!--视图解析器-->
+    <bean id="templateResolver" class="org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver">
+        <!-- html文件所在的目录 -->
+        <property name="prefix" value="/WEB-INF/templates/" />
+        <!-- 文件的后缀名 -->
+        <property name="suffix" value=".html" />
+        <property name="order" value="1"/>
+        <property name="cacheable" value="false" />
+        <property name="characterEncoding" value="UTF-8"/>
+    </bean>
+    <bean id="templateEngine" class="org.thymeleaf.spring5.SpringTemplateEngine">
+        <property name="templateResolver" ref="templateResolver" />
+    </bean>
+    <bean id="viewResolver" class="org.thymeleaf.spring5.view.ThymeleafViewResolver">
+        <property name="templateEngine" ref="templateEngine" />
+        <property name="characterEncoding"  value="UTF-8" />
+    </bean>
+
+
+    <!--开启注解扫描-->
+    <context:component-scan base-package="com.unhkk"/>
+
+    <!-- 配置文件解析器对象，要求id名称必须是multipartResolver -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 10G -->
+        <property name="maxUploadSize" value="10737418240"/>
+    </bean>
+
+    <!--解决静态资源被拦截的问题-->
+    <mvc:default-servlet-handler/>
+
+
+    <!--注册拦截器-->
+    <bean id="myInterceptor" class="com.unhkk.interceptors.LoginInterceptor"></bean>
+    <!--配置拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/admin**"/>
+            <ref bean="myInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!-- 进入服务器跳转：此时为重定向到Controller类中的方法 -->
+    <mvc:view-controller path="/" view-name="redirect:index"/>
+</beans>
