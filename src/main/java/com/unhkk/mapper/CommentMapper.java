@@ -28,4 +28,6 @@ public interface CommentMapper {
 	int deleteByCid(int parseInt);
 
 	List<Comment> selectCommentListWithUserId(int userId);
+
+	int selectCountOfComment();
 }

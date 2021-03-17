@@ -52,4 +52,9 @@ public class CommentServiceImpl extends BaseServiceImpl implements CommentServic
 	public List<Comment> selectCommentListWithUserId(int userId) {
 		return commentMapper.selectCommentListWithUserId(userId);
 	}
+
+	@Override
+	public int selectCountOfComment() {
+		return commentMapper.selectCountOfComment();
+	}
 }

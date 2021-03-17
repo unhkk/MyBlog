@@ -18,4 +18,6 @@ public interface CommentService {
 	int deleteSelectComment(String[] coids);
 
 	List<Comment> selectCommentListWithUserId(int userId);
+
+	int selectCountOfComment();
 }

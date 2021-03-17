@@ -201,4 +201,8 @@
       parent = #{parent,jdbcType=INTEGER}
     where coid = #{coid,jdbcType=INTEGER}
   </update>
+
+  <select id="selectCountOfComment" resultType="int">
+    select count(coid) from comment;
+  </select>
 </mapper>

@@ -25,7 +25,7 @@ public class AdminController extends BaseController {
 		model.addAttribute("totalContent",contentService.selectNumberOfArticles());
 		model.addAttribute("totalCategory",categoryService.selectCountOfCategory());
 		model.addAttribute("totalTag",tagService.selectCountOfTag());
-		model.addAttribute("totalComment",99);
+		model.addAttribute("totalComment",commentService.selectCountOfComment());
 		return "dashboard";
 	}
 
