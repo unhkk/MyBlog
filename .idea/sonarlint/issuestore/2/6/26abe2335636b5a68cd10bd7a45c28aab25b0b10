@@ -1,8 +1,0 @@
-
-2
-java:S1643G"Use a StringBuilder instead.(ó¯•˜
-W	java:S125Ÿ"<This block of commented-out lines of code should be removed.(á€ã™þÿÿÿÿ
-f
-java:S1192*"KDefine a constant instead of duplicating this literal "categories" 3 times.(¶á‰Âúÿÿÿÿ
-h
-java:S3776\"RRefactor this method to reduce its Cognitive Complexity from 28 to the 15 allowed.(õÅ¼¹
